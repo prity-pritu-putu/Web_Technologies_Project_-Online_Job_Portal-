@@ -16,9 +16,9 @@
             <a href="index.php?page=logout" class="btn-red">Logout</a>
         </div>
     </div>
-    
+   
     <h2>My Posted Jobs</h2>
-    
+   
     <?php
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['job_id'])) {
         require_once 'controllers/JobDeleteController.php';
@@ -30,12 +30,22 @@
         }
     }
     ?>
-    
-    <?php
+   
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search jobs by title, description, or requirements...">
+    </div>
+   
+    <div id="jobsTable">
+        <?php
         require_once 'controllers/EmployerController.php';
-        $jobs = employer_viewMyJobsAction();
+        // Check if it's a search request
+        if (isset($_GET['search'])) {
+            $jobs = employer_searchMyJobsAction();
+        } else {
+            $jobs = employer_viewMyJobsAction();
+        }
         ?>
-        
+       
         <table>
             <tr>
                 <th>Title</th>
@@ -61,5 +71,27 @@
             </tr>
             <?php endforeach; ?>
         </table>
+    </div>
+ 
+    <script>
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchTerm = this.value.trim();
+           
+            if (searchTerm.length > 0) {
+                fetch('index.php?page=search_employer_jobs&search=' + searchTerm)
+                    .then(response => response.text())
+                    .then(data => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(data, 'text/html');
+                        const newTable = doc.getElementById('jobsTable');
+                        if (newTable) {
+                            document.getElementById('jobsTable').innerHTML = newTable.innerHTML;
+                        }
+                    });
+            } else {
+                location.reload();
+            }
+        });
+    </script>
 </body>
 </html>
