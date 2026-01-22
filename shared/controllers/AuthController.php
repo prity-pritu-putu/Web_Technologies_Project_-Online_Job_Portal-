@@ -1,6 +1,6 @@
 <?php
 require_once 'models/UserModel.php';
-require_once 'models/JobSeekerModel.php';
+require_once 'models/Job SeekerModel.php';
 require_once 'models/EmployerModel.php';
 
 function auth_loginAction() {
